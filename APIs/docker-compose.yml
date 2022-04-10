@@ -1,0 +1,52 @@
+    
+      services:
+        backend: 
+              build:
+               context: .
+               dockerfile: Dockerfile
+              command:  'python manage.py runserver 0.0.0.0:8000'
+              ports:
+                - '8000:8000'
+              volumes:
+                - .:/APIs
+              depends_on: 
+                - 'db'  
+
+
+        queue:
+            build:
+               context: .
+               dockerfile: Dockerfile
+            restart: always
+            command:  'python consumer.py'
+            
+            depends_on: 
+                - 'db'           
+        db:
+            image: postgres:10.18
+            restart: always
+            environment:
+              POSTGRES_DATABASE: admin
+              POSTGRES_USER: postgres
+              POSTGRES_PASSWORD: '1234'
+            ports:
+                - "5432:5432"
+            # volumes:
+            #   - postgres_data:/var/lib/postgresql/data   
+            # volumes:
+            #     - ./postgresql.conf:/etc/postgresql.conf
+            #     - ./pg-data:/var/lib/postgresql/data             
+              
+        # db:
+        #     image: mysql
+        #     restart: always
+        #     environment:
+        #       MYSQL_DATABASE: admin
+        #       MYSQL_ROOT_USER: root
+        #       # MYSQL_USER: root
+        #       # MYSQL_PASSWORD: root
+        #       MYSQL_ROOT_PASSWORD: sql@1234
+        #       # MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+        #     volumes:
+        #         - .dbdata:/var/lib/mysql
+           
